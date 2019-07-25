@@ -1,9 +1,11 @@
 import os
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, flash, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+
+from forms import SignUpForm
 
 app = Flask(__name__)
 
@@ -22,6 +24,22 @@ app.config["SECRET_KEY"] = b'\x9b\xff\xa7p\xdd=p\x1bE\xc8\xd7Q\xb1\xf8\x90\xda\x
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    form = SignUpForm()
+
+    if request.method == 'POST':
+        if form.validate() == False:
+            flash('All fields are required.')
+            return render_template('signup.html', form=form)
+        else:
+            # TODO: check with database for repeats
+            return redirect('index.html', signup_success=True)
+            # TODO: email confirmation?
+
+    elif request.method == 'GET':
+        return render_template('signup.html', form=form)
 
 @app.errorhandler(404)
 def not_found(error):
