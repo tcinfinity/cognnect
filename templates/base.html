@@ -4,30 +4,48 @@
     <title>{% block title %}{% endblock %}</title>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <meta name="description" content="Cognnect">
     <meta name="author" content="Cognnect">
-    <meta name="keywords" 
+    <meta name="keywords"
        content="cognnect">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 
 </head>
-<body>
-    {% block body %}
+<main role="main" class="container">
+    <body>
 
-        {% block nav %}
-            {% include "nav.html" %}
-        {% endblock nav %}
+      {% block nav %}
+          {% include "nav.html" %}
+      {% endblock nav %}
+      <div class="row">
+        <div class="col-md-8">
+          {% block body %}
 
-        {% block content %}
+              {% block content %}
 
-        {% endblock content %}
-    
-    {% endblock body %}
-</body>
+              {% endblock content %}
+
+          {% endblock body %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="content-section">
+              <h3>Sidebar</h3>
+              <p class='text-muted'>You can put any information here you'd like.
+                <ul class="list-group">
+                  <li class="list-group-item list-group-item-light">Latest Posts</li>
+                  <li class="list-group-item list-group-item-light">Announcements</li>
+                  <li class="list-group-item list-group-item-light">Calendars</li>
+                  <li class="list-group-item list-group-item-light">etc</li>
+                </ul>
+              </p>
+            </div>
+          </div>
+    </body>
 </html>

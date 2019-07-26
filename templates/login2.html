@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Cognnect - Log In{% endblock %}
+
+{% block content %}
+    <!--validation errors-->
+    {% for }
+
+    {% for message in form.username.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {% for message in form.password.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    <form action="/" method=post>
+        <fieldset>
+            <legend>Sign Up</legend>
+            <!--prevent csrf-->
+            {{ form.hidden_tag() }}
+
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class='su-error'>{{ error }}</div>
+                {% endfor %}
+
+                <tr class="su-{{ field.?? }}">
+                    <th>{{ field.label }}</th>
+                    <td>{{ field }}</td>
+                </tr>
+            {% endfor %}
+
+            <div class="input-container">
+                <div class="su-un">
+                    {{ form.username.label }}<br>
+                    {{ form.username }}<br>
+                </div>
+
+                <div class="su-email">
+                    {{ form.email.label }}<br>
+                    {{ form.email }}<br>
+                </div>
+
+                <div class="su-pw">
+                    {{ form.password.label }}<br>
+                    {{ form.password }}<br>
+                </div>
+
+                <div class="su-cf-pw">
+                    {{ form.confirm_password.label }}<br>
+                    {{ form.confirm_password }}<br>
+                </div>
+
+                <div class="su-submit">
+                    {{ form.submit }}
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Need An Account? <a class="ml-2" href="{{ url_for('signup') }}">Sign Up Now</a>
+        </small>
+    </div>
+{% endblock %}

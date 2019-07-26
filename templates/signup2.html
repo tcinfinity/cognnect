@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Cognnect - Sign Up{% endblock %}
+
+{% block content %}
+    <!--validation errors-->
+
+    {% for message in form.username.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {% for message in form.email.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {% for message in form.password.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {% for message in form.confirm_password.errors %}
+        <div>{{ message }}</div>
+    {% endfor %}
+    <div class="content-section">
+      <form action="/" method=post>
+          <fieldset class="form-group">
+              <legend class="border-bottom mb-4">Sign Up</legend>
+              <!--prevent csrf-->
+              {{ form.hidden_tag() }}
+
+              {% for field in form %}
+                  {% for error in field.errors %}
+                      <div class="invalid-feedback">{{ error }}</div>
+                  {% endfor %}
+              {% endfor %}
+
+              <div class="form-group">
+                  <div class="su-un">
+                      {{ form.username.label(class="form-control-label") }}<br>
+                      {{ form.username(class="form-control form-control-lg") }}<br>
+                  </div>
+
+                  <div class="su-email">
+                      {{ form.email.label(class="form-control-label") }}<br>
+                      {{ form.email(class="form-control form-control-lg") }}<br>
+                  </div>
+
+                  <div class="su-pw">
+                      {{ form.password.label(class="form-control-label") }}<br>
+                      {{ form.password(class="form-control form-control-lg") }}<br>
+                  </div>
+
+                  <div class="su-cf-pw">
+                      {{ form.confirm_password.label(class="form-control-label") }}<br>
+                      {{ form.confirm_password(class="form-control form-control-lg") }}<br>
+                  </div>
+
+                  <div class="su-submit">
+                      {{ form.submit(class="btn btn-outline-info") }}
+                  </div>
+              </div>
+
+          </fieldset>
+      </form>
+    </div>
+
+{% endblock %}
