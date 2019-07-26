@@ -1,5 +1,6 @@
 import os
 from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for
+from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -12,28 +13,32 @@ app = Flask(__name__)
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
+# 32-bit key
+app.config["SECRET_KEY"] = b'\xd4*Y\xc3/Q\xa68\xd8\xd2\x9da\x9a\x1c\xeaM+\xd0\x12\xd7\xd1\xb7+\xdd'
+
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-# 32-bit key
-app.config["SECRET_KEY"] = b'\x9b\xff\xa7p\xdd=p\x1bE\xc8\xd7Q\xb1\xf8\x90\xda\xa6\x89\xd7\xe1\x84\xc8d\xb0\xc8\x17\xc7\xf4\x95\rZc'
 
-is_logged = False
-
-@app.route('/')
-@app.route("/index", methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def index():
+    if 'is_logged' not in session:
+        session['is_logged'] = False
     return render_template('index.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    global is_logged
     unok = True
     emok = True
-    if is_logged:
-        return redirect(url_for('index'))
+    if 'is_logged' not in session:
+        session['is_logged'] = False
+
+    if session['is_logged']:
+        return redirect(url_for('index')) #TODO: ,is_logged=True
     usernames = db.execute("SELECT username FROM cognnectuser").fetchall()
     emails = db.execute("SELECT email FROM cognnectuser").fetchall()
 
@@ -67,12 +72,11 @@ def signup():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    global is_logged
-    global current_user
     loginok = False
     form = LoginForm()
+
     if form.validate_on_submit():
-        print(form.username.data,form.password.data)
+        print(form.username.data, form.password.data)
         '''
         Check For Special Characters As Part Of Special Characters
         '''
@@ -99,9 +103,9 @@ def login():
         try:
             if form.password.data == userinfo[0][2]:
 
-                is_logged = True
-                current_user = form.username.data
-                message = 'You have been logged in, ' + current_user + '!'
+                session['is_logged'] = True
+                session['current_user'] = form.username.data
+                message = 'You have been logged in, ' + session['current_user'] + '!'
                 flash(message, 'success')
                 return redirect(url_for('index'))
             else:

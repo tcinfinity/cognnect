@@ -1,0 +1,5 @@
+CREATE TABLE cognnectuser (
+  user VARCHAR NOT NULL UNIQUE,
+  email VARCHAR NOT NULL UNIQUE,
+  password VARCHAR NOT NULL
+);
