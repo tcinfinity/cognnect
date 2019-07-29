@@ -1,4 +1,6 @@
 import os
+import time
+import random
 from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -109,7 +111,7 @@ def login():
 
         userinfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
-        
+
         try:
             if form.password.data == userinfo[0][2]:
 
@@ -149,6 +151,25 @@ def tiltpy():
     data = request.args.get('img')
     angle = face_tilt.faceline(face_tilt.from_base64(data))
     return angle
+
+@app.route("/stroop", methods=['GET', 'POST'])
+def stroop():
+    
+        tstart = time.time()
+        wordList = ["Red", "Blue", "Green", "Yellow"]
+        colourList = ["Red", "Blue", "Green", "Yellow"]
+        temp1 = random.randint(0,3)
+        temp2 = random.randint(0,3)
+        answer = input(wordList[temp1] + " " + colourList[temp2])
+        notDone = True
+        while notDone:
+            if answer == wordList[temp1]:
+                print(answer)
+                tend = time.time()
+                print(tend-tstart)
+                notDone = False
+            else:
+                answer = input(wordList[temp1] + " " + colourList[temp2])
 
 # @app.errorhandler(404)
 # def not_found(error):
