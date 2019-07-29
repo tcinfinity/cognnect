@@ -15,25 +15,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    {% block link %}{% endblock %}
 
 </head>
 <main role="main" class="container">
     <body>
+    {% block body %}
 
       {% block nav %}
           {% include "nav.html" %}
       {% endblock nav %}
       <div class="row">
         <div class="col-md-8">
-          {% block body %}
+            {% block content %}
 
-              {% block content %}
-
-              {% endblock content %}
-
-          {% endblock body %}
+            {% endblock content %}
         </div>
 
+        {% block sidebar %}
         <div class="col-md-4">
             <div class="content-section">
               <h3>Sidebar</h3>
@@ -46,6 +45,9 @@
                 </ul>
               </p>
             </div>
-          </div>
+        </div>
+        {% endblock sidebar %}
+
+    {% endblock %}
     </body>
 </html>

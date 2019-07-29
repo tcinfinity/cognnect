@@ -1,2 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Cognnect - Home{% endblock %}
+
+{% block content %}
+    {% if logout %}
+        <div class="logout">
+            You have successfully been logged out.
+        </div>
+        <script>
+            setTimeout(() => {
+                logoutMsg = document.getElementsByClassName('logout')[0];
+                logoutMsg.classList.add('fadeout')
+            }, 5000)
+        </script>
+    {% endif %}
+    {% include "about.html" %}
+{% endblock %}

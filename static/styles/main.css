@@ -86,22 +86,23 @@ a.article-title:hover {
   border-radius: 5px;
 }
 
-.nav-active:hover {
-
+.nav-logo {
+  width: 10vw;
+  transition: drop-shadow 0.3s ease-in-out;
 }
 
-.nav-active:active {
-
+.nav-logo:hover {
+  -webkit-filter: drop-shadow(3px 1px 1px #444);
+  filter: drop-shadow(3px 1px 1px #444);
 }
 
-.nav-brand-active {
-  cursor: default;
+.logout {
+  opacity: 1;
+  top: 0;
+  transition: all 1s ease-out;
 }
 
-.nav-brand-active:hover {
-
-}
-
-.nav-brand-active:active {
-  
+.logout .fadeout {
+  opacity: 0;
+  top: -50px;
 }

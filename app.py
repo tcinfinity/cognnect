@@ -6,6 +6,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from forms import SignUpForm, LoginForm
 
+import face_tilt
+
 specialChars = ['"',"'"]
 app = Flask(__name__)
 
@@ -17,7 +19,7 @@ if not os.getenv("DATABASE_URL"):
 app.config["SECRET_KEY"] = b'\xd4*Y\xc3/Q\xa68\xd8\xd2\x9da\x9a\x1c\xeaM+\xd0\x12\xd7\xd1\xb7+\xdd'
 
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
@@ -43,12 +45,14 @@ def signup():
     emails = db.execute("SELECT email FROM cognnectuser").fetchall()
 
     form = SignUpForm()
+
+    # TODO: async load
     for username in usernames:
         if form.username.data == username[0]:
             unok = False
     for email in emails:
         if form.email.data == email[0]:
-            emok = False3
+            emok = False
 
     '''Check For Duplicate Username & Email'''
     if form.validate_on_submit() and unok and emok:
@@ -57,17 +61,22 @@ def signup():
         db.commit()
         flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('index'))
+
     elif not unok and emok:
         flash(f'The username "{form.username.data}" has been taken!', 'danger')
         return render_template('signup.html', form=form)
+
     elif not emok and unok:
         flash(f'The email "{form.email.data}" has been registered already!', 'danger')
         return render_template('signup.html', form=form)
+
     elif not unok and not emok:
         flash(f'The username "{form.username.data}" and email "{form.email.data}" have both been taken!', 'danger')
         return render_template('signup.html', form=form)
+
     '''Return Same Website If Fields Do Not Satisfy Requirements'''
     return render_template('signup.html', form=form)
+    
     # TODO: email confirmation?
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -76,6 +85,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
+        print(str(form.remember.data))
         print(form.username.data, form.password.data)
         '''
         Check For Special Characters As Part Of Special Characters
@@ -114,8 +124,34 @@ def login():
             flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-@app.errorhandler(404)
-def not_found(error):
-    resp = make_response(render_template('error.html'), 404)
-    resp.headers['X-Something'] = 'A value' # ??
-    return resp
+@app.route('/myaccount')
+def myaccount():
+    return render_template('myaccount.html')
+
+@app.route('/logout')
+def logout():
+    if 'is_logged' not in session:
+        session['is_logged'] = False
+
+    if session['is_logged']:
+        session['is_logged'] = False
+        session['current_user'] = None
+        return render_template('index.html', logout=True)
+    else:
+        return redirect(url_for('index'))
+
+@app.route('/tilt')
+def tilt():
+    return render_template('tilt.html')
+
+@ app.route('/tiltpy')
+def tiltpy():
+    data = request.args.get('img')
+    angle = face_tilt.faceline(face_tilt.from_base64(data))
+    return angle
+
+# @app.errorhandler(404)
+# def not_found(error):
+#     resp = make_response(render_template('error.html'), 404)
+#     resp.headers['X-Something'] = 'A value' # ??
+#     return resp

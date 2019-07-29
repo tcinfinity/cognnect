@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Cognnect - Tilt Test{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/tilt.css') }}">
+<script src="{{ url_for('static', filename='scripts/tilt/cam.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div style="position: relative" class="margin">
+    <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
+    <canvas id="overlay">
+</div>
+<div class="ui">
+    <div class="abs-angle" id="angle"></div>
+</div>
+{% endblock content %}
+
+<!--remove sidebar-->
+{% block sidebar %}{% endblock %}
