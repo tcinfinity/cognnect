@@ -22,7 +22,7 @@ async function main() {
 
   }
 
-  loop = setInterval(() => {
+  loop = setInterval(async () => {
 
       // Copying the image in a temporary canvas
       let temp = document.createElement('canvas');
@@ -33,7 +33,7 @@ async function main() {
       let tempcontext = temp.getContext("2d"),
           tempScale = (temp.height/temp.width);
 
-      temp.drawImage(
+      tempcontext.drawImage(
           video,
           0, 0,
           video.offsetWidth, video.offsetHeight
@@ -41,23 +41,27 @@ async function main() {
 
       url = temp.toDataURL('image/jpeg').split(',')[1];
 
-      let fetch_data = {
-        method: 'POST',
-        body: {
-          img: url
-        },
-        headers = new Headers()
+      body_data = {
+        img: url
       }
 
-      req = await fetch('/tiltpy', fetch_data).then(async (res) => {
+      let fetch_data = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(body_data)
+      }
+
+      let res = await fetch('/tiltpy', fetch_data).then(res => {
         if (res == 'recterror') {
           angleEl.innerText = 'Multiple faces detected. Please ensure that only you are being captured by your webcam or try changing the background.'
         } else {
           angleEl.innerText = res;
         }
       })
-
-  }, 1000/30)
+      
+  }, 1000/30);
 
 }
 

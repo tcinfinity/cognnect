@@ -21,7 +21,7 @@ if not os.getenv("DATABASE_URL"):
 app.config["SECRET_KEY"] = b'\xd4*Y\xc3/Q\xa68\xd8\xd2\x9da\x9a\x1c\xeaM+\xd0\x12\xd7\xd1\xb7+\xdd'
 
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
@@ -126,11 +126,11 @@ def login():
             flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-@app.route('/myaccount')
+@app.route('/myaccount', methods=['GET', 'POST'])
 def myaccount():
     return render_template('myaccount.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     if 'is_logged' not in session:
         session['is_logged'] = False
@@ -142,17 +142,19 @@ def logout():
     else:
         return redirect(url_for('index'))
 
-@app.route('/tilt')
+@app.route('/tilt', methods=['GET', 'POST'])
 def tilt():
     return render_template('tilt.html')
 
-@ app.route('/tiltpy')
+@ app.route('/tiltpy', methods=['GET', 'POST'])
 def tiltpy():
-    data = request.args.get('img')
+    data = request.form.get('img')
+    print(request.form)
+
     angle = face_tilt.faceline(face_tilt.from_base64(data))
     return angle
 
-@app.route("/stroop", methods=['GET', 'POST'])
+@app.route("/stroop", methods=['POST'])
 def stroop():
     
         tstart = time.time()

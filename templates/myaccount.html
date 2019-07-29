@@ -2,6 +2,6 @@
 {% block title %}Cognnect - My Account{% endblock %}
 {% block content %}
 
-Welcome, {{ session.username }}.
+Welcome, {{ session.current_user|e }}.
 
 {% endblock %}

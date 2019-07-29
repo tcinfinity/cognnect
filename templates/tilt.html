@@ -8,13 +8,19 @@
 {% endblock %}
 
 {% block content %}
-<div style="position: relative" class="margin">
-    <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
-    <canvas id="overlay">
-</div>
-<div class="ui">
-    <div class="abs-angle" id="angle"></div>
-</div>
+{% if session.is_logged %}
+    <div style="position: relative" class="margin">
+        <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
+        <canvas id="overlay">
+    </div>
+    <div class="ui">
+        <div class="abs-angle" id="angle"></div>
+    </div>
+{% else %}
+    <div class="login-error">
+        You need to be logged in to take the Tilt Test. You can log in <a class="ml-2" href="{{ url_for('login') }}">here</a>.
+    </div>
+{% endif %}
 {% endblock content %}
 
 <!--remove sidebar-->
