@@ -88,12 +88,12 @@ a.article-title:hover {
 
 .nav-logo {
   width: 10vw;
-  transition: drop-shadow 0.3s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
 .nav-logo:hover {
-  -webkit-filter: drop-shadow(3px 1px 1px #444);
-  filter: drop-shadow(3px 1px 1px #444);
+  -webkit-filter: drop-shadow(1px 1px 1px #666);
+  filter: drop-shadow(1px 1px 1px #666);
 }
 
 .logout {

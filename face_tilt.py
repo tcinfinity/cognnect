@@ -10,6 +10,9 @@ from collections import OrderedDict
 from statistics import mean
 import math
 import sys
+import base64
+from PIL import Image
+from io import BytesIO
 
 FACIAL_LANDMARKS_IDXS = OrderedDict([
 	('nose', (27, 31))
@@ -18,33 +21,35 @@ FACIAL_LANDMARKS_IDXS = OrderedDict([
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('detect-face-parts/shape_predictor_68_face_landmarks.dat')
 
-def faceline(pic):
-    gradient = []
+def faceline(image):
 
-    image = cv2.imread(pic)
+    global FACIAL_LANDMARKS_IDXS
+    global detector
+    global predictor
+
     image = imutils.resize(image, width=500)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     rects = detector(gray, 1)
 
-    if len(rects) > 1:
+    if len(rects) > 1: # cannot have more than 1 face
         return 'recterror'
 
     vector = []
 
-    for (i, rect) in enumerate(rects):
+    for rect in rects:
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
 
-    for (name, (i, j)) in FACIAL_LANDMARKS_IDXS.items():
-        clone = image.copy()
-        cv2.putText(clone, name, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
-            0.7, (0, 0, 255), 2)
+        for (name, (i, j)) in FACIAL_LANDMARKS_IDXS.items():
+            clone = image.copy()
+            # cv2.putText(clone, name, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+            #     0.7, (0, 0, 255), 2)
 
-        for (x, y) in shape[i:j]:
-            cv2.circle(clone, (x, y), 1, (0, 0, 255), -1)
-            temp = {'x' : x, 'y' : y}
-            vector.append(temp)
+            for (x, y) in shape[i:j]:
+                # cv2.circle(clone, (x, y), 1, (0, 0, 255), -1)
+                temp = {'x' : x, 'y' : y}
+                vector.append(temp)
 
     q = 0
     startx = 0
@@ -67,21 +72,26 @@ def faceline(pic):
     endpt_ay = int(starty - 1000*np.sin(theta))
     endpt_bx = int(endx + 1000*np.cos(theta))
     endpt_by = int(endy + 1000*np.sin(theta))
-    gradient.append((starty-endy)/(startx-endx))
-
-    # cv2.line(clone, (startx, starty), (endpt_ax, endpt_ay), (0, 0, 255), 2)
-    # cv2.line(clone, (startx, starty), (endpt_bx, endpt_by), (0, 0, 255), 2)
 
     try:
-        angle_tan = (gradient[0]-gradient[2])/(1+gradient[2]*gradient[0])
+        gradient = (starty - endy) / (startx - endx)
+        angle = math.degrees(math.atan(gradient))
+        if angle > 0:
+            return 90-angle
+        else: # < 0
+            return 90+angle
     except ZeroDivisionError: # vertical
         return 0
 
-    angle = [math.degrees(math.atan(angle_tan)), math.degrees(math.atan(-angle_tan))]
-    return angle
 
-    # cv2.imshow(clone)
+def from_base64(base64_string):
 
-def from_base64(base64_data):
-    nparr = np.fromstring(base64_data.decode('base64'), np.uint8)
-    return cv2.imdecode(nparr, cv2.IMREAD_ANYCOLOR)
+    imgdata = base64.b64decode(base64_string)
+    pilimg = Image.open(BytesIO(imgdata))
+    image = cv2.cvtColor(np.array(pilimg), cv2.COLOR_BGR2RGB)
+    return image
+
+    # sbuf = BytesIO()
+    # sbuf.write(base64.b64decode(base64_string))
+    # pimg = Image.open(sbuf)
+    # return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)

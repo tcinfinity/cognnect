@@ -53,13 +53,17 @@ async function main() {
         body: JSON.stringify(body_data)
       }
 
-      let res = await fetch('/tiltpy', fetch_data).then(res => {
-        if (res == 'recterror') {
-          angleEl.innerText = 'Multiple faces detected. Please ensure that only you are being captured by your webcam or try changing the background.'
-        } else {
-          angleEl.innerText = res;
-        }
-      })
+      let res = await fetch('/tiltpy', fetch_data)
+        .then(res => res.json())
+        .then(data => {
+          let res = data.res
+          if (res == 'recterror') {
+            angleEl.innerText = 'Multiple faces detected. Please ensure that only you are being captured by your webcam or try changing the background.'
+          } else {
+            angleEl.innerText = res;
+          }
+        })
+        .catch(error => console.error(error))
       
   }, 1000/30);
 

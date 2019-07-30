@@ -1,8 +1,9 @@
 import os
 import time
 import random
-from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for
+from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for, jsonify
 from flask_session import Session
+from flask_socketio import SocketIO, emit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -24,6 +25,7 @@ app.config["SECRET_KEY"] = b'\xd4*Y\xc3/Q\xa68\xd8\xd2\x9da\x9a\x1c\xeaM+\xd0\x1
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+socketio = SocketIO(app, manage_session=False)
 
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
@@ -146,13 +148,15 @@ def logout():
 def tilt():
     return render_template('tilt.html')
 
-@ app.route('/tiltpy', methods=['GET', 'POST'])
+@app.route('/tiltpy', methods=['GET', 'POST'])
 def tiltpy():
-    data = request.form.get('img')
-    print(request.form)
+    data = request.json
+    data = data['img']
 
     angle = face_tilt.faceline(face_tilt.from_base64(data))
-    return angle
+
+    response = jsonify(res=angle)
+    return response
 
 @app.route("/stroop", methods=['POST'])
 def stroop():
