@@ -61,19 +61,19 @@ def signup():
         print(form.username.data, form.email.data, form.password.data)
         db.execute("INSERT INTO cognnectuser (username, email, password) VALUES (:un, :em, :pw);",{"un": form.username.data, "em": form.email.data, "pw": form.password.data})
         db.commit()
-        flash(f'Account created for {form.username.data}!', 'success')
+        flash('Account created for {form.username.data}!', 'success')
         return redirect(url_for('index'))
 
     elif not unok and emok:
-        flash(f'The username "{form.username.data}" has been taken!', 'danger')
+        flash('The username "{form.username.data}" has been taken!', 'danger')
         return render_template('signup.html', form=form)
 
     elif not emok and unok:
-        flash(f'The email "{form.email.data}" has been registered already!', 'danger')
+        flash('The email "{form.email.data}" has been registered already!', 'danger')
         return render_template('signup.html', form=form)
 
     elif not unok and not emok:
-        flash(f'The username "{form.username.data}" and email "{form.email.data}" have both been taken!', 'danger')
+        flash('The username "{form.username.data}" and email "{form.email.data}" have both been taken!', 'danger')
         return render_template('signup.html', form=form)
 
     '''Return Same Website If Fields Do Not Satisfy Requirements'''
