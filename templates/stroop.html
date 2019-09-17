@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Cognnect - Stroop Test{% endblock %}
+
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<div class="splash content-section">
+
+    {% if session.is_logged %}
+
+        <iframe src="https://www.psytoolkit.org/experiment-library/experiment_stroop.html" width="1100px" height="800px" style="border:none;"></iframe>
+
+    {% else %}
+        <div class="login-error">
+            You need to be logged in to take the Tilt Test. You can log in <a class="ml-0" href="{{ url_for('login') }}">here</a>.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+{% block sidebar %}{% endblock %}

@@ -4,23 +4,46 @@
 
 {% block link %}
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/tilt.css') }}">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/tilt/cam.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-{% if session.is_logged %}
-    <div style="position: relative" class="margin">
-        <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
-        <canvas id="overlay">
+<div class="content-section">
+
+    {% if session.is_logged %}
+    <div class="splash">
+        <p class="about">
+            Tilt your head to both sides as far as you can. <br>
+            The maximum angles for both sides will be shown below.
+        </p>
+        <button class="start btn btn-primary">Start</button>
     </div>
-    <div class="ui">
-        <div class="abs-angle" id="angle"></div>
+
+    <div class="main">
+        <div style="position: relative" class="margin">
+            <video id="inputVideo" autoplay muted></video>
+            <canvas id="overlay">
+        </div>
+        <div class="ui">
+            <div class="abs-angle" id="angle"></div>
+            <div class="max-angle">
+                Left: <span id="left-angle-txt"></span>
+            </div>
+            <div class="min-angle">
+                Right: <span id="right-angle-txt"></span>
+            </div>
+        </div>
     </div>
-{% else %}
-    <div class="login-error">
-        You need to be logged in to take the Tilt Test. You can log in <a class="ml-2" href="{{ url_for('login') }}">here</a>.
-    </div>
-{% endif %}
+
+
+    {% else %}
+        <div class="login-error">
+            You need to be logged in to take the Tilt Test. You can log in <a class="ml-0" href="{{ url_for('login') }}">here</a>.
+        </div>
+    {% endif %}
+
+</div>
 {% endblock content %}
 
 <!--remove sidebar-->

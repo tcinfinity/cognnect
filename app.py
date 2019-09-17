@@ -1,7 +1,7 @@
 import os
 import time
 import random
-from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for
+from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -61,19 +61,19 @@ def signup():
         print(form.username.data, form.email.data, form.password.data)
         db.execute("INSERT INTO cognnectuser (username, email, password) VALUES (:un, :em, :pw);",{"un": form.username.data, "em": form.email.data, "pw": form.password.data})
         db.commit()
-        flash('Account created for {form.username.data}!', 'success')
+        flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('index'))
 
     elif not unok and emok:
-        flash('The username "{form.username.data}" has been taken!', 'danger')
+        flash(f'The username "{form.username.data}" has been taken!', 'danger')
         return render_template('signup.html', form=form)
 
     elif not emok and unok:
-        flash('The email "{form.email.data}" has been registered already!', 'danger')
+        flash(f'The email "{form.email.data}" has been registered already!', 'danger')
         return render_template('signup.html', form=form)
 
     elif not unok and not emok:
-        flash('The username "{form.username.data}" and email "{form.email.data}" have both been taken!', 'danger')
+        flash(f'The username "{form.username.data}" and email "{form.email.data}" have both been taken!', 'danger')
         return render_template('signup.html', form=form)
 
     '''Return Same Website If Fields Do Not Satisfy Requirements'''
@@ -119,7 +119,7 @@ def login():
                 session['current_user'] = form.username.data
                 message = 'You have been logged in, ' + session['current_user'] + '!'
                 flash(message, 'success')
-                return redirect(url_for('index'))
+                return redirect(url_for('myaccount'))
             else:
                 flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
         except:
@@ -146,32 +146,20 @@ def logout():
 def tilt():
     return render_template('tilt.html')
 
-@ app.route('/tiltpy', methods=['GET', 'POST'])
+@app.route('/tiltpy', methods=['GET', 'POST'])
 def tiltpy():
-    data = request.form.get('img')
-    print(request.form)
+    data = request.json
+    data = data['img']
 
     angle = face_tilt.faceline(face_tilt.from_base64(data))
-    return angle
 
-@app.route("/stroop", methods=['POST'])
+    response = jsonify(res=angle)
+    return response
+
+@app.route("/stroop", methods=['POST', 'GET'])
 def stroop():
     
-        tstart = time.time()
-        wordList = ["Red", "Blue", "Green", "Yellow"]
-        colourList = ["Red", "Blue", "Green", "Yellow"]
-        temp1 = random.randint(0,3)
-        temp2 = random.randint(0,3)
-        answer = input(wordList[temp1] + " " + colourList[temp2])
-        notDone = True
-        while notDone:
-            if answer == wordList[temp1]:
-                print(answer)
-                tend = time.time()
-                print(tend-tstart)
-                notDone = False
-            else:
-                answer = input(wordList[temp1] + " " + colourList[temp2])
+    return render_template('stroop.html')
 
 # @app.errorhandler(404)
 # def not_found(error):

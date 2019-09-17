@@ -1,13 +1,22 @@
 let video, loop, angleEl;
+let left, right, leftEl, rightEl;
 
-(function() {
-  main();
-})();
+$(document).ready(() => {
+  $('.main').hide()
+  $('.start').click(main)
+})
 
 async function main() {
 
+  $('.splash').fadeOut(500, () => {
+    $('.main').fadeIn(500);
+  });
+
   video = document.getElementById('inputVideo');
   angleEl = document.getElementById('angle');
+
+  leftEl = document.getElementById('max-angle-txt');
+  rightEl = document.getElementById('min-angle-txt');
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({video: true})
@@ -53,15 +62,33 @@ async function main() {
         body: JSON.stringify(body_data)
       }
 
-      let res = await fetch('/tiltpy', fetch_data).then(res => {
-        if (res == 'recterror') {
-          angleEl.innerText = 'Multiple faces detected. Please ensure that only you are being captured by your webcam or try changing the background.'
-        } else {
-          angleEl.innerText = res;
-        }
-      })
+      let res = await fetch('/tiltpy', fetch_data)
+        .then(res => res.json())
+        .then(data => {
+
+          let res = data.res;
+
+          if (res == 'faceerror0') {
+            angleEl.innerText = 'No faces could be detected. Please ensure that your face is being captured by your webcam or try changing the background.'
+          } else if (res == 'faceerror1') {
+            angleEl.innerText = 'Multiple faces detected. Please ensure that only you are being captured by your webcam or try changing the background.'
+          } else {
+
+            angleEl.innerText = res;
+
+            // left is -ve (min); right is +ve (max)
+            if (res > right) {
+              rightEl.innerText = res;
+            } else if (left < min) {
+              leftEl.innerText = res;
+            }
+
+          }
+
+        })
+        .catch(error => console.error(error))
       
-  }, 1000/30);
+  }, 1000/10);
 
 }
 
@@ -74,13 +101,4 @@ function stop() {
   }
 
   video.srcObject = null;
-}
-
-function requestpy(options) {
-  return new Promise ((resolve, reject) => {
-    let req = http.request(options);
-
-    req.on('response', res => resolve(res));
-    req.on('error', err => reject(err));
-  })
 }
