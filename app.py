@@ -5,6 +5,7 @@ from flask import Flask, session, render_template, flash, redirect, request, mak
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 from forms import SignUpForm, LoginForm
 
@@ -27,6 +28,14 @@ Session(app)
 
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
+Base = declarative_base()
+Base.query = db.query_property()
+
+# Imports user models
+def init_db():
+    import models
+    Base.metadata.create_all(bind=engine)
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -78,7 +87,7 @@ def signup():
 
     '''Return Same Website If Fields Do Not Satisfy Requirements'''
     return render_template('signup.html', form=form)
-    
+
     # TODO: email confirmation?
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -158,8 +167,12 @@ def tiltpy():
 
 @app.route("/stroop", methods=['POST', 'GET'])
 def stroop():
-    
+
     return render_template('stroop.html')
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.remove()
 
 # @app.errorhandler(404)
 # def not_found(error):
