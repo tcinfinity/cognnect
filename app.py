@@ -42,9 +42,6 @@ def updateUserDB(usern):
     db.execute("UPDATE cognnectuser SET pastrecords = :pr WHERE username = :un", {"pr": temp, "un": user.username})
     db.commit()
 
-cognnectun = Table('cognnectuser', metadata, autoload=True, autoload_with=engine)
-tableinfo = repr(cognnectun)
-tablename = cognnectun.name
 userInfo = []
 
 def retrieverow(username1):
