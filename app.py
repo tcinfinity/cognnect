@@ -131,9 +131,11 @@ def signup():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    global user
+    global userInfo
+
     loginok = False
     form = LoginForm()
-
 
     if form.validate_on_submit():
         print(str(form.remember.data))
@@ -158,35 +160,36 @@ def login():
         Check If Username & Password Are Matching Pairs
         '''
         try:
-            userinfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
+            userInfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
+            if len(userInfo) == 0:
+                raise Exception('username not found')
         except:
             print('no user exists')
-            flash('Login Unsuccessful. Please check username and password for any special characters!', 'danger')
-            return render_template('login.html', title='Login', form=form)
+            flash('Login Unsuccessful. Please check your username!', 'danger')
+            return redirect(url_for('login', title='Login', form=form))
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
 
         try:
-            if form.password.data == userinfo[0][2]:
-                global userInfo
+            if form.password.data == userInfo[0][2]:
                 userInfo = retrieverow(form.username.data)[0]
                 session['is_logged'] = True
                 session['current_user'] = form.username.data
 
                 user = User()
 
-                user.username = userinfo[0]
-                user.email = userinfo[1]
-                user.password = userinfo[2]
-                user.pastrecords = userinfo[3]
-
-
+                user.username = userInfo[0]
+                user.email = userInfo[1]
+                user.password = userInfo[2]
+                user.pastrecords = userInfo[3]
 
                 message = 'You have been logged in, ' + session['current_user'] + '!'
                 flash(message, 'success')
                 return redirect(url_for('myaccount'))
             else:
+                print('not matching')
                 flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
         except:
+            print()
             flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
