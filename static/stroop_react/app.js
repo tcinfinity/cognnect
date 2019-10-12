@@ -218,7 +218,7 @@ class WordGeneratorKeyboard extends React.Component {
       },
       currentParity: null,
       endTest: false,
-      status: ''
+      status: '\u2060' // for rendering html element with correct height
     };
 
     // binding
@@ -359,7 +359,7 @@ class WordGeneratorKeyboard extends React.Component {
       ding();
 
       // regenerate next word
-      clearInterval(this.state.timeout);
+      clearTimeout(this.state.timeout);
       this.newInstance();
 
     }
@@ -386,14 +386,14 @@ class WordGeneratorKeyboard extends React.Component {
 
     this.generateWord();
     this.setState({ 
-      timeout: setTimeout(this.timeoutFunction, time),
+      timeout: setTimeout(this.timeoutFunction.bind(this), time),
       startTime: performance.now()
     });
 
   }
 
   timeoutFunction() {
-    this.state.setState({ status: 'Question not answered' });
+    this.setState({ status: 'Question not answered' });
     this.newInstance();
   }
 
@@ -421,10 +421,10 @@ class WordGeneratorKeyboard extends React.Component {
   render() {
     if (this.state.endTest) {
       
-      if (this.state.results.compatible == 0 || this.state.results.incompatible == 0) {
-        // unable to calculate average difference since there were no results for one of the tests (results must be correct)
+      if (this.state.results.compatible < 10 || this.state.results.incompatible < 10) {
+        // unable to calculate average difference since there were not enough results for one of the tests (results must be correct)
         return (
-          <div className="container h-100 d-flex alert-window">
+          <div className="container h-100 d-flex alert-window vertical-center">
             <div className="alert alert-danger jumbotron my-auto w-100">
               <h1 className="display-3">Error</h1>
               <p className="lead">Sorry, there seems to be an error. Please restart the test.</p>
@@ -481,10 +481,12 @@ class WordGeneratorKeyboard extends React.Component {
 
     } else {
       return (
-        <div className="jumbotron container">
-          <Word color={this.state.color} text={this.state.text} />
-          <br />
-          <Status className="text-muted" text={this.state.status} />
+        <div className="container vertical-center">
+          <div className="jumbotron col-md-12" style={{color: "black"}}>
+            <Word color={this.state.color} text={this.state.text} />
+            <br />
+            <Status className="text-muted" text={this.state.status} />
+          </div>
         </div>
       );
     }
@@ -574,23 +576,30 @@ class Main extends React.Component {
 
       if (this.state.useKeyboard) {
         return (
-          <div className=" text-center">
+          <div className="text-center">
             <WordGeneratorKeyboard restartOnError={this.restartOnError.bind(this)} />
           </div>
         )
       }
 
-      return (
-        <div className=" text-center">
-          <WordGenerator restartOnError={this.restartOnError.bind(this)} />
-        </div>
-      );
+      if (confirm('Sorry, the voice recognition is still work in progress. Proceed with test using keyboard?')) {
+        return (
+          <div className="text-center">
+            <WordGeneratorKeyboard restartOnError={this.restartOnError.bind(this)} />
+            {/* <WordGenerator restartOnError={this.restartOnError.bind(this)} /> */}
+            {/* Issues:
+            - Handling latency between detection and actual speech
+            - Speech detection start and stop */}
+          </div>
+        );
+      }
+      
     }
     
     // splash
     return (
-      <div className="container h-100 d-flex alert-window">
-        <div className="splash text-center jumbotron">
+      <div className="container h-100 d-flex alert-window vertical-center">
+        <div className="splash text-center jumbotron col-md-12">
           <h5 className="title">Stroop Test</h5>
 
           <div className="information">
@@ -608,7 +617,7 @@ class Main extends React.Component {
               <small className="text-muted">Can't use your microphone? Use RGYB on your keyboard instead.</small>
             </p>
             
-            <div className="custom-control custom-switch">
+            <div className="custom-control custom-switch use-keyboard">
               <input type="checkbox" className="toggle-keyboard custom-control-input" id="toggleKeyboard" onChange={this.handleToggleKeyboard} defaultChecked={this.state.useKeyboard} />
               <label className="custom-control-label" htmlFor="toggleKeyboard">Use keyboard</label>
             </div>
