@@ -8,6 +8,7 @@ class SignUpForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8)])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired(), EqualTo('password')])
+    dorp = SelectField('Are You a Patient or a Doctor?', choices=[('d', 'Doctor'),('p', 'Patient')])
     submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
