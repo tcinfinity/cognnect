@@ -34,8 +34,6 @@ def updateRecords(usern,new):
     global user
     temp = user.pastrecords
     temp += new + ","
-    db.execute("UPDATE cognnectuser SET pastrecords = :pr WHERE username = :un", {"pr": temp, "un": user.username})
-    db.commit()
     userinfo = retrieverow(usern)[0]
     user.pastrecords = userinfo[3]
 
