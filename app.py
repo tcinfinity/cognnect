@@ -175,6 +175,11 @@ def stroop():
 def stroop_react():
     return render_template('/stroop_react/index.html')
 
+@app.route('/stroop_react_results', methods=['POST'])
+def stroop_react_results():
+    data = request.get_json()
+    print(data)
+    return jsonify(success_user=session['current_user'])
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

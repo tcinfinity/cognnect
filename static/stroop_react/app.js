@@ -397,7 +397,26 @@ class WordGeneratorKeyboard extends React.Component {
     this.newInstance();
   }
 
-  
+  async returnFlaskPost(results) {
+
+    let jsonData = {
+      // rewriting for better key names
+      "compatibleTime": results['Compatible Time'],
+      "incompatibleTime": results['Incompatible Time'],
+      "timeDifference": results['Difference']
+    };
+
+    fetch('/stroop_react_results', {
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      method: 'POST',
+      body: JSON.stringify(jsonData)
+    })
+    .then(res => res.json())
+    .then(res => console.log('Success: ', JSON.stringify(res)))
+    .catch(error => console.error('Error: ', error));
+  }
 
   render() {
     if (this.state.endTest) {
@@ -419,7 +438,7 @@ class WordGeneratorKeyboard extends React.Component {
 
       const sum = arr => arr.reduce((a, b) => a + b, 0);
 
-      let rows = []; // array of table rows
+      
 
       let averageCompatibleTime = sum(this.state.time.compatible) / this.state.results.compatible;
       let averageIncompatibleTime = sum(this.state.time.incompatible) / this.state.results.incompatible;
@@ -435,6 +454,10 @@ class WordGeneratorKeyboard extends React.Component {
         'Incompatible Time': averageIncompatibleTime,
         'Difference': timeDifference
       };
+
+      this.returnFlaskPost(displayedValues);
+
+      let rows = []; // array of table rows
 
       for (const [key, value] of Object.entries(displayedValues)) {
         // https://reactjs.org/docs/lists-and-keys.html#keys
