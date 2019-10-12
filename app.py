@@ -165,10 +165,16 @@ def tiltpy():
     response = jsonify(res=angle)
     return response
 
-@app.route("/stroop", methods=['POST', 'GET'])
+@app.route('/stroop', methods=['POST', 'GET'])
 def stroop():
 
     return render_template('stroop.html')
+
+
+@app.route('/stroop_react', methods=['POST', 'GET'])
+def stroop_react():
+    return render_template('/stroop_react/index.html')
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
