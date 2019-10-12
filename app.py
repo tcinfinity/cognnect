@@ -45,8 +45,11 @@ def updateUserDB(usern):
 userInfo = []
 
 def retrieverow(username1):
-    result = db.execute("SELECT * FROM cognnectuser WHERE username = :un", {"un": username1}).fetchall()
-    return result
+    try:
+        result = db.execute("SELECT * FROM cognnectuser WHERE username = :un", {"un": username1}).fetchall()
+        return result
+    except:
+        return None
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -154,8 +157,10 @@ def login():
         '''
         Check If Username & Password Are Matching Pairs
         '''
-
-        userinfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
+        try:
+            userinfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
+        except:
+            print("No User Exists?")
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
 
         try:
