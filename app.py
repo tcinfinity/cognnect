@@ -215,16 +215,10 @@ def tiltpy():
 
 @app.route('/stroop', methods=['POST', 'GET'])
 def stroop():
-
     return render_template('stroop.html')
 
-
-@app.route('/stroop_react', methods=['POST', 'GET'])
-def stroop_react():
-    return render_template('/stroop_react/index.html')
-
-@app.route('/stroop_react_results', methods=['POST'])
-def stroop_react_results():
+@app.route('/stroop_results', methods=['POST'])
+def stroop_results():
     data = request.get_json()
     print(data)
     return jsonify(success_user=session['current_user'])

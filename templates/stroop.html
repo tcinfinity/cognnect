@@ -3,22 +3,42 @@
 {% block title %}Cognnect - Stroop Test{% endblock %}
 
 {% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/stroop.css') }}">
 {% endblock %}
 
-{% block content %}
-<div class="splash content-section">
+{% block script %}
+<!-- Load React. -->
+<!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+<script src="{{ url_for('static', filename='scripts/stroop/app.js') }}" type="text/babel"></script>
+<!-- <script src="voice.js" defer></script> -->
+{% endblock %}
+
+{% block body %}
+<div class="outer-flex">
+
+    {% block nav %}
+        {% include "nav.html" %}
+    {% endblock nav %}
 
     {% if session.is_logged %}
 
-        <iframe src="https://www.psytoolkit.org/experiment-library/experiment_stroop.html" width="1100px" height="800px" style="border:none;"></iframe>
+        <div id="root" class="flex-grow-1"></div>
+            
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     {% else %}
+
         <div class="login-error">
             You need to be logged in to take the Tilt Test. You can log in <a class="ml-0" href="{{ url_for('login') }}">here</a>.
         </div>
+
     {% endif %}
 
 </div>
-{% endblock content %}
-
-{% block sidebar %}{% endblock %}
+{% endblock body %}

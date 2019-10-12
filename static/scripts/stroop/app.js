@@ -406,7 +406,7 @@ class WordGeneratorKeyboard extends React.Component {
       "timeDifference": results['Difference']
     };
 
-    fetch('/stroop_react_results', {
+    fetch('/stroop_results', {
       headers: {
         'Content-Type': 'application/json'
       }, 
@@ -427,7 +427,7 @@ class WordGeneratorKeyboard extends React.Component {
           <div className="container h-100 d-flex alert-window vertical-center">
             <div className="alert alert-danger jumbotron my-auto w-100">
               <h1 className="display-3">Error</h1>
-              <p className="lead">Sorry, there seems to be an error. Please restart the test.</p>
+              <p className="lead">Sorry, you seem to have answered not enough questions correctly. Please restart the test.</p>
               <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.props.restartOnError}>
                 <span aria-hidden="true">&times;</span>&nbsp;Restart
               </button>
@@ -482,7 +482,7 @@ class WordGeneratorKeyboard extends React.Component {
     } else {
       return (
         <div className="container vertical-center">
-          <div className="jumbotron col-md-12" style={{color: "black"}}>
+          <div className="jumbotron col-md-12" style={{backgroundColor: "black"}}>
             <Word color={this.state.color} text={this.state.text} />
             <br />
             <Status className="text-muted" text={this.state.status} />
@@ -523,9 +523,14 @@ const TableRow = props => {
 }
 
 const Word = props => {
+  
+  console.log(props.color);
+  
   return (
-    <h2 className="stroop-word" style={{ color: `${props.color}` }}>{props.text}</h2>
+    // enable word-border if yellow for clearer against gray bkgd
+    <h2 className={`stroop-word ${props.color == 'yellow' ? 'word-border' : ''} if }`} style={{ color: `${props.color}` }}>{props.text}</h2>
   );
+
 }
 
 const Status = props => {
@@ -607,7 +612,7 @@ class Main extends React.Component {
             <p>
               For example, if you see <span style={{color: "green", fontWeight: "bold"}}>yellow</span>, you should say <i style={{fontWeight: "bold"}}>"green"</i>.
               <br />
-              If you see <span style={{color: "yellow", fontWeight: "bold"}}>yellow</span>, you should say <i style={{fontWeight: "bold"}}>"yellow"</i>.
+              If you see <span className="word-border" style={{color: "yellow", fontWeight: "bold"}}>yellow</span>, you should say <i style={{fontWeight: "bold"}}>"yellow"</i>.
             </p>
 
             <button className="btn btn-primary start-btn" onClick={this.handleStart}>Start</button><br />
