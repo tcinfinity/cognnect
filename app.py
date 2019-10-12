@@ -9,10 +9,44 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from forms import SignUpForm, LoginForm
 
+# Every time a record is shown, use updateRecords(username,new)
+
 import face_tilt
 
 specialChars = ['"',"'"]
 app = Flask(__name__)
+
+class User():
+    username = ""
+    password = ""
+    pastrecords = ""
+
+def retrievecol(colname, dbname):
+    query = 'SELECT ' + colname + ' FROM ' + dbname + ';'
+    result = connection.execute(query)
+    final = []
+    for tup in result:
+        temp = tup[0]
+        final.append(temp)
+    return final
+
+def updateRecords(usern,new):
+    global user
+    temp = user.pastrecords
+    temp += new + ","
+    db.execute("UPDATE cognnectuser SET pastrecords = :pr WHERE username = :un", {"pr": temp, "un": user.username})
+    db.commit()
+    userinfo = retrieverow(usern)[0]
+    user.pastrecords = userinfo[3]
+
+cognnectun = Table('cognnectuser', metadata, autoload=True, autoload_with=engine)
+tableinfo = repr(cognnectun)
+tablename = cognnectun.name
+userInfo = []
+
+def retrieverow(username1):
+    result = db.execute("SELECT * FROM cognnectuser WHERE username = :un", {"un": username1}).fetchall()
+    return result
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -41,6 +75,8 @@ def init_db():
 def index():
     if 'is_logged' not in session:
         session['is_logged'] = False
+    if 'current_user' not in session:
+        session['current_user'] = ""
     return render_template('index.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -95,6 +131,7 @@ def login():
     loginok = False
     form = LoginForm()
 
+
     if form.validate_on_submit():
         print(str(form.remember.data))
         print(form.username.data, form.password.data)
@@ -123,9 +160,20 @@ def login():
 
         try:
             if form.password.data == userinfo[0][2]:
-
+                global userInfo
+                userInfo = retrieverow(form.username.data)[0]
                 session['is_logged'] = True
                 session['current_user'] = form.username.data
+
+                user = User()
+
+                user.username = userinfo[0]
+                user.email = userinfo[1]
+                user.password = userinfo[2]
+                user.pastrecords = userinfo[3]
+
+
+
                 message = 'You have been logged in, ' + session['current_user'] + '!'
                 flash(message, 'success')
                 return redirect(url_for('myaccount'))
