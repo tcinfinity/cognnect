@@ -10,10 +10,10 @@ cognnectun = Table('cognnectuser', metadata, autoload=True, autoload_with=engine
 print(repr(cognnectun))
 print(cognnectun.name)
 print(engine.table_names())
-egCommand = 'SELECT * FROM username'
+egCommand = 'SELECT * FROM cognnectuser'
 result = connection.execute(egCommand)
 results = result.fetchall()
-print(results)
+print("Cognnect Usernames: ", results)
 app.secret_key = 'super secret key'
 
 @app.route('/', methods=['GET','POST'])
