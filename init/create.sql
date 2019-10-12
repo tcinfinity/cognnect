@@ -1,5 +1,7 @@
 CREATE TABLE cognnectuser (
-  user VARCHAR NOT NULL UNIQUE,
-  email VARCHAR NOT NULL UNIQUE,
-  password VARCHAR NOT NULL
+  username VARCHAR NOT NULL, 
+  email VARCHAR NOT NULL, 
+  password VARCHAR NOT NULL, 
+  pastrecords VARCHAR NOT NULL, 
+  dorp VARCHAR NOT NULL
 );

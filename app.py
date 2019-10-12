@@ -160,7 +160,9 @@ def login():
         try:
             userinfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
         except:
-            print("No User Exists?")
+            print('no user exists')
+            flash('Login Unsuccessful. Please check username and password for any special characters!', 'danger')
+            return render_template('login.html', title='Login', form=form)
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
 
         try:
