@@ -140,6 +140,10 @@ def login():
     if form.validate_on_submit():
         print(str(form.remember.data))
         print(form.username.data, form.password.data)
+
+        # store user preference first even if login not successful
+        session.permanent = form.remember.data
+
         '''
         Check For Special Characters As Part Of Special Characters
         '''
@@ -213,6 +217,7 @@ def logout():
 def tilt():
     return render_template('tilt.html')
 
+# receives frame from video, performs ml on server
 @app.route('/tiltpy', methods=['GET', 'POST'])
 def tiltpy():
     data = request.json
@@ -222,6 +227,12 @@ def tiltpy():
 
     response = jsonify(res=angle)
     return response
+
+@app.route('/tilt_results', methods=['POST'])
+def tilt_results():
+    data = request.get_json()
+    print(data)
+    return jsonify(success_user=session['current_user'])
 
 @app.route('/stroop', methods=['POST', 'GET'])
 def stroop():

@@ -1,9 +1,32 @@
 let video, loop, angleEl;
-let left, right, leftEl, rightEl;
+let left = 0, right = 0, leftEl, rightEl;
 
 $(document).ready(() => {
   $('.main').hide()
   $('.start').click(main)
+
+  $('.end-test').click(() => {
+    clearInterval(loop);
+
+    let jsonData = {
+      left: left,
+      right: right
+    }
+
+    console.log(jsonData)
+
+    fetch('/tilt_results', {
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      method: 'POST',
+      body: JSON.stringify(jsonData)
+    })
+    .then(res => res.json())
+    .then(res => console.log('Success: ', JSON.stringify(res)))
+    .catch(error => console.error('Error: ', error));
+  });
+
 })
 
 async function main() {
@@ -15,8 +38,10 @@ async function main() {
   video = document.getElementById('inputVideo');
   angleEl = document.getElementById('angle');
 
-  leftEl = document.getElementById('max-angle-txt');
-  rightEl = document.getElementById('min-angle-txt');
+  leftEl = document.getElementById('left-angle-txt');
+  rightEl = document.getElementById('right-angle-txt');
+
+  console.log()
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({video: true})
@@ -76,11 +101,15 @@ async function main() {
 
             angleEl.innerText = res;
 
-            // left is -ve (min); right is +ve (max)
-            if (res > right) {
-              rightEl.innerText = res;
-            } else if (left < min) {
-              leftEl.innerText = res;
+            // left and right are mirrored in frame from video, manually flip back to suit user
+
+            // right is -ve (min); left is +ve (max)
+            if (res < right) {
+              rightEl.innerText = Math.abs(res); // change -ve to positive
+              right = res;
+            } else if (res > left) {
+              leftEl.innerText = res; 
+              left = res;
             }
 
           }
