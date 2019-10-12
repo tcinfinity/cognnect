@@ -68,7 +68,7 @@ def signup():
     '''Check For Duplicate Username & Email'''
     if form.validate_on_submit() and unok and emok:
         print(form.username.data, form.email.data, form.password.data)
-        db.execute("INSERT INTO cognnectuser (username, email, password) VALUES (:un, :em, :pw);",{"un": form.username.data, "em": form.email.data, "pw": form.password.data})
+        db.execute("INSERT INTO cognnectuser (username, email, password, dorp) VALUES (:un, :em, :pw, :dorp);",{"un": form.username.data, "em": form.email.data, "pw": form.password.data, "dorp": form.dorp.data})
         db.commit()
         flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('index'))
