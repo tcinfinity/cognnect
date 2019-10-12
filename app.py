@@ -189,7 +189,7 @@ def login():
                 print('not matching')
                 flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
         except:
-            print()
+            print('? probably outofrange userInfo[0][2]')
             flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
