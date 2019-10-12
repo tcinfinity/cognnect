@@ -39,6 +39,11 @@ def updateRecords(usern,new):
     userinfo = retrieverow(usern)[0]
     user.pastrecords = userinfo[3]
 
+def updateUserDB(usern):
+    global user
+    db.execute("UPDATE cognnectuser SET pastrecords = :pr WHERE username = :un", {"pr": temp, "un": user.username})
+    db.commit()
+
 cognnectun = Table('cognnectuser', metadata, autoload=True, autoload_with=engine)
 tableinfo = repr(cognnectun)
 tablename = cognnectun.name
