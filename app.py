@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from forms import SignUpForm, LoginForm
+from forms import SignUpForm, LoginForm, ChatSearchForm
 
 # Every time a record is shown, use updateRecords(username,new)
 
@@ -281,3 +281,16 @@ def shutdown_session(exception=None):
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html'), 404
+
+
+# chat
+@app.route('/chat')
+def chatsearch():
+    form = ChatSearchForm()
+
+    if form.validate_on_submit():
+
+        query = form.query.data
+
+        # search for doctor username
+        db.execute('SELECT * FROM cognnectuser WHERE')
