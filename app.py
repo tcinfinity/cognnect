@@ -211,17 +211,17 @@ def myaccount():
     stroopFinalList = []
     for test in stroopInfo:
         temp = {}
-        temp['Time'] = stroopInfo[1]
-        temp['CT'] = stroopInfo[2]
-        temp['IT'] = stroopInfo[3]
-        temp['D'] = stroopInfo[4]
+        temp['Time'] = test[1]
+        temp['CT'] = test[2]
+        temp['IT'] = test[3]
+        temp['D'] = test[4]
         stroopFinalList.append(temp)
     tiltFinalList = []
     for test in tiltInfo:
         temp = {}
-        temp['Time'] = tiltInfo[1]
-        temp['L'] = tiltInfo[2]
-        temp['R'] = tiltInfo[3]
+        temp['Time'] = test[1]
+        temp['L'] = test[2]
+        temp['R'] = test[3]
         tiltFinalList.append(temp)
     return render_template('myaccount.html', stroop=stroopFinalList, tilt=tiltFinalList)
 
