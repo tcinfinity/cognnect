@@ -2,7 +2,11 @@
 {% block title %}Cognnect - My Account{% endblock %}
 {% block content %}
 
-<p>Welcome, {{ session.firstname|e }}.</p>
+{% if session['dorp'] == 'd' %}
+<p>Welcome, Doctor {{ session.fullname|e }}.</p>
+{% else %}
+<p>Welcome, Doctor {{ session.fullname|e }}.</p>
+{% endif %}
 <br><br>
 <h1>Account Details</h1>
 <h3>{{ session.fullname|e }}</h3>
