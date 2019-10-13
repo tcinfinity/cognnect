@@ -20,3 +20,16 @@ CREATE TABLE tilt (
   leftAngle FLOAT NOT NULL,
   rightAngle FLOAT NOT NULL
 );
+
+CREATE TABLE chats (
+    patient VARCHAR NOT NULL,
+    doctor VARCHAR NOT NULL,
+    uuid VARCHAR NOT NULL UNIQUE
+);
+
+
+-- CREATE TABLE <uuid> (
+--     user VARCHAR NOT NULL,
+--     line TEXT NOT NULL,
+--     ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
