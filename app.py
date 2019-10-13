@@ -107,9 +107,11 @@ def signup():
     '''Check For Duplicate Username & Email'''
     if form.validate_on_submit() and unok and emok:
         print(form.username.data, form.email.data, form.password.data)
-        db.execute("INSERT INTO cognnectuser (username, email, password, dorp) VALUES (:un, :em, :pw, :dorp);",{"un": form.username.data, "em": form.email.data, "pw": form.password.data, "dorp": form.dorp.data})
+        db.execute("INSERT INTO cognnectuser (username, firstname, lastname, email, password, dorp) VALUES (:un,:fn, :ln, :em, :pw, :dorp);",{"un": form.username.data,"fn":form.firstname.data,"ln":form.lastname.data, "em": form.email.data, "pw": form.password.data, "dorp": form.dorp.data})
         db.commit()
-        flash(f'Account created for {form.username.data}!', 'success')
+        flash(f'Account created for {form.firstname.data} {form.lastname.data}!', 'success')
+        session["firstname"] = form.firstname.data
+        session["fullname"] = form.firstname.data + " " + form.lastname.data
         return redirect(url_for('index'))
 
     elif not unok and emok:
@@ -174,10 +176,12 @@ def login():
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
 
         try:
-            if form.password.data == userInfo[0][2]:
+            if form.password.data == userInfo[0][4]:
                 userInfo = retrieverow(form.username.data)[0]
                 session['is_logged'] = True
                 session['current_user'] = form.username.data
+                session['firstname'] = userInfo[0][1]
+                session['fullname'] = userInfo[0][1] + " " + userInfo[0][2]
 
                 user = User()
 
@@ -186,7 +190,7 @@ def login():
                 user.password = userInfo[2]
                 user.pastrecords = userInfo[3]
 
-                message = 'You have been logged in, ' + session['current_user'] + '!'
+                message = 'You have been logged in, ' + session['firstname'] + '!'
                 flash(message, 'success')
                 return redirect(url_for('myaccount'))
             else:
@@ -209,6 +213,8 @@ def logout():
     if session['is_logged']:
         session['is_logged'] = False
         session['current_user'] = None
+        session["firstname"] = None
+        session["fullname"] = None
         return render_template('index.html', logout=True)
     else:
         return redirect(url_for('index'))
