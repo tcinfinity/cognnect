@@ -244,8 +244,6 @@ def patientaccount(patient_id):
         PL = []
         DL = []
         doctorList = db.execute("SELECT * FROM stroop WHERE (patient = :un);",{"un": patient_id}).fetchall()
-        for d in doctorList:
-            DL.append(p[0])
         stroopFinalList = []
         for test in stroopInfo:
             temp = {}
