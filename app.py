@@ -231,6 +231,8 @@ def tiltpy():
 @app.route('/tilt_results', methods=['POST'])
 def tilt_results():
     data = request.get_json()
+    db.execute("INSERT INTO tilt (username, leftAngle, rightAngle) VALUES (:un, :la, :ra)", {"un": session['current_user'],"la":data["left"],"ra":data["right"]})
+    db.commit()
     print(data)
     return jsonify(success_user=session['current_user'])
 
@@ -241,6 +243,8 @@ def stroop():
 @app.route('/stroop_results', methods=['POST'])
 def stroop_results():
     data = request.get_json()
+    db.execute("INSERT INTO stroop (username, compatibleTime, incompatibleTime, timeDifference) VALUES (:un, :ct, :it, :td)", {"un": session['current_user'],"ct":data["compatibleTime"],"it":data["incompatibleTime"],"td":data["timeDifference"]})
+    db.commit()
     print(data)
     return jsonify(success_user=session['current_user'])
 

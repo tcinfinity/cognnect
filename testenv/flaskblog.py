@@ -58,10 +58,6 @@ def updateRecords(new):
     userinfo = retrieverow('A1')[0]
     user.pastrecords = userinfo[3]
 
-print("CURRENT RECORD: ", user.pastrecords)
-updateRecords("HAHA TRSAH")
-print("UPDATED RECORD:",user.pastrecords)
-
 @app.route('/', methods=['GET','POST'])
 def index():
     if 'is_logged' not in session:
