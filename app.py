@@ -114,7 +114,7 @@ def signup():
         session['current_user'] = form.username.data
         session["firstname"] = form.firstname.data
         session["fullname"] = form.firstname.data + " " + form.lastname.data
-        return redirect(url_for('index'))
+        return redirect(url_for('myaccount'))
 
     elif not unok and emok:
         flash(f'The username "{form.username.data}" has been taken!', 'danger')
