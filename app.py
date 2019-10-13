@@ -1,4 +1,4 @@
-import os
+import os, sys, traceback
 import time
 import random
 from flask import Flask, session, render_template, flash, redirect, request, make_response, url_for, jsonify
@@ -183,19 +183,18 @@ def login():
         try:
             print("User Info:", userInfo)
             if form.password.data == userInfo[0][4]:
-                userInfo = retrieverow(form.username.data)[0]
                 session['is_logged'] = True
                 session['current_user'] = form.username.data
                 session['firstname'] = userInfo[0][1]
                 session['fullname'] = userInfo[0][1] + " " + userInfo[0][2]
-                session["dorp"] = userInfo[0][5]
+                session['dorp'] = userInfo[0][5]
                 print("User Full Name: " + session['fullname'])
 
                 user = User()
 
-                user.username = userInfo[0]
-                user.email = userInfo[3]
-                user.password = userInfo[4]
+                user.username = userInfo[0][0]
+                user.email = userInfo[0][3]
+                user.password = userInfo[0][4]
 
                 message = 'You have been logged in, ' + session['firstname'] + '!'
                 flash(message, 'success')
@@ -204,7 +203,7 @@ def login():
                 print('not matching')
                 flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
         except:
-            print('? probably outofrange userInfo[0][2]')
+            print(traceback.format_exc())
             flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
