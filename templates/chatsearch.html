@@ -1,5 +1,22 @@
 {% extends "base.html" %}
 
+{% block link %}
+<style>
+.link {
+    cursor: pointer;
+    transition: color 0.1 ease-in-out;
+}
+
+.link:hover {
+    color: #181818;
+}
+</style>
+{% endblock %}
+
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block body %}
 
     {% block nav %}
@@ -34,14 +51,12 @@
                     <div class="form-group">
                         {{ form.submit(class="btn btn-outline-info") }}
                     </div>
-                    <small class="text-muted ml-2">
-                        Your doctor should have given you his/her username. Input that here to connect with your doctor.
-                    </small>
                 </form>
             </div>
             <div class="border-top pt-3">
-                <small class="text-muted">
-                    Need An Account? filler
+                <small id="need-help" class="text-muted font-weight-bold link" style="cursor: pointer">Need help?</small><br>
+                <small id="help-text" class="text-muted d-none">
+                        Your doctor should have given you his/her username. Input that here to connect with your doctor.
                 </small>
             </div>
             {% endblock content %}
@@ -49,4 +64,10 @@
         </div>
     </div>
 
+
+<script>
+$('#need-help').click(() => {
+    $('#help-text').removeClass('d-none');
+})
+</script>
 {% endblock body %}

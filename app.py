@@ -218,7 +218,7 @@ def myaccount():
         for p in patientList:
             PL.append(p[0])
     elif session['dorp'] == 'p':
-        doctorList = db.execute("SELECT * FROM stroop WHERE (patient = :un);",{"un": session['current_user']}).fetchall()
+        doctorList = db.execute("SELECT * FROM stroop WHERE (username = :un);",{"un": session['current_user']}).fetchall()
         for d in doctorList:
             DL.append(p[0])
     stroopFinalList = []
@@ -245,7 +245,7 @@ def patientaccount(patient_id):
         tiltInfo = db.execute("SELECT * FROM tilt WHERE (username = :un);",{"un": patient_id}).fetchall()
         PL = []
         DL = []
-        doctorList = db.execute("SELECT * FROM stroop WHERE (patient = :un);",{"un": patient_id}).fetchall()
+        doctorList = db.execute("SELECT * FROM stroop WHERE (username = :un);",{"un": patient_id}).fetchall()
         stroopFinalList = []
         for test in stroopInfo:
             temp = {}
@@ -282,6 +282,12 @@ def logout():
 
 @app.route('/tilt', methods=['GET', 'POST'])
 def tilt():
+
+    # inaccessible by doctors
+    if session['dorp'] == 'd':
+        flash('Sorry, this page is only accessible to patients.',  'warning')
+        return redirect('/')
+
     return render_template('tilt.html')
 
 # receives frame from video, performs ml on server
@@ -305,6 +311,12 @@ def tilt_results():
 
 @app.route('/stroop', methods=['POST', 'GET'])
 def stroop():
+
+    # inaccessible by doctors
+    if session['dorp'] == 'd':
+        flash('Sorry, this page is only accessible to patients.',  'warning')
+        return redirect('/')
+
     return render_template('stroop.html')
 
 @app.route('/stroop_results', methods=['POST'])
@@ -325,7 +337,7 @@ def not_found(error):
 
 
 # chat
-@app.route('/chat')
+@app.route('/chat', methods=['POST', 'GET'])
 def chatsearch():
     form = ChatSearchForm()
 
@@ -338,7 +350,7 @@ def chatsearch():
     # inaccessible by doctors
     if session['dorp'] == 'd':
         flash('Sorry, this page is only accessible to patients.',  'warning')
-        return redirect('index')
+        return redirect(url_for('index'))
 
     if form.validate_on_submit():
 
@@ -349,7 +361,7 @@ def chatsearch():
 
         if len(results) == 0:
             flash('Sorry, we can\'t seem to find this doctor. Make sure you\'ve entered the correct username that the doctor has given you.', 'danger')
-            return redirect('chatsearch', form=form, query=query)
+            return redirect(url_for('chatsearch'))
 
         else:
 
@@ -362,14 +374,14 @@ def chatsearch():
             # connection exists already
             if len(possibleConnections) > 0: # can put == 1: should not have repeat
                 flash('Sorry, you have already been registered with this doctor.', 'warning')
-                return redirect('chatsearch', form=form)
+                return redirect(url_for('chatsearch'))
 
             # create new connection in table chats
 
             # init uuid for chat url
             # base64 enc for url + shortening
-            uuid = uuid.uuid4()
-            enc_uuid = base64.urlsafe_b64encode(uuid.bytes).strip("=") # remove trailing
+            enc_uuid = uuid.uuid4()
+            # enc_uuid = base64.urlsafe_b64encode(base_uuid.bytes).strip("=") # remove trailing
 
             db.execute(
                 "INSERT INTO chats (patient, doctor, uuid) VALUES (:p, :d, :uuid)",
@@ -379,7 +391,7 @@ def chatsearch():
 
             # 1: firstname, 2: lastname
             flash('You have been successfully connected with Dr. ' + results[0][1] + ' ' + results[0][2], 'success')
-            redirect('chatsearch', form=form)
+            return redirect(url_for('chatsearch'))
 
     # default render
     return render_template('chatsearch.html', form=form)
