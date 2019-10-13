@@ -110,6 +110,8 @@ def signup():
         db.execute("INSERT INTO cognnectuser (username, firstname, lastname, email, password, dorp) VALUES (:un,:fn, :ln, :em, :pw, :dorp);",{"un": form.username.data,"fn":form.firstname.data,"ln":form.lastname.data, "em": form.email.data, "pw": form.password.data, "dorp": form.dorp.data})
         db.commit()
         flash(f'Account created for {form.firstname.data} {form.lastname.data}!', 'success')
+        session['is_logged'] = True
+        session['current_user'] = form.username.data
         session["firstname"] = form.firstname.data
         session["fullname"] = form.firstname.data + " " + form.lastname.data
         return redirect(url_for('index'))
