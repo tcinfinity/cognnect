@@ -361,7 +361,7 @@ def chatsearch():
 
             # connection exists already
             if len(possibleConnections) > 0: # can put == 1: should not have repeat
-                flash('Sorry, you have already been registered with this doctor.'. 'warning')
+                flash('Sorry, you have already been registered with this doctor.', 'warning')
                 return redirect('chatsearch', form=form)
 
             # create new connection in table chats
