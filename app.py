@@ -184,6 +184,7 @@ def login():
                 session['current_user'] = form.username.data
                 session['firstname'] = userInfo[0][1]
                 session['fullname'] = userInfo[0][1] + " " + userInfo[0][2]
+                print("User Full Name: " + session['fullname'])
 
                 user = User()
 
