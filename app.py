@@ -13,6 +13,8 @@ from forms import SignUpForm, LoginForm, ChatSearchForm
 
 import face_tilt
 
+import uuid, base64
+
 specialChars = ['"',"'"]
 app = Flask(__name__)
 
@@ -288,9 +290,57 @@ def not_found(error):
 def chatsearch():
     form = ChatSearchForm()
 
+    # ensure logged in
+    if not session['is_logged']:
+        # pre-render to skip latency from accessing db
+        # form not rendered - not required to parse in arg
+        return render_template('chatsearch.html')
+
+    # inaccessible by doctors
+    if session['dorp'] == 'd':
+        flash('Sorry, this page is only accessible to patients.',  'warning')
+        return redirect('index')
+
     if form.validate_on_submit():
 
         query = form.query.data
 
         # search for doctor username
-        db.execute('SELECT * FROM cognnectuser WHERE')
+        results = db.execute("SELECT * FROM cognnectuser WHERE dorp = 'd' AND username = :username", {"username": query}).fetchall()
+
+        if len(results) == 0:
+            flash('Sorry, we can\'t seem to find this doctor. Make sure you\'ve entered the correct username that the doctor has given you.', 'danger')
+            return redirect('chatsearch', form=form, query=query)
+
+        else:
+
+            # check if user has already connected with doctor
+            possibleConnections = db.execute(
+                "SELECT * FROM chats WHERE patient = :patient AND doctor = :doctor", 
+                {"patient": session['current_user'], "doctor": query}
+            ).fetchall()
+
+            # connection exists already
+            if len(possibleConnections) > 0: # can put == 1: should not have repeat
+                flash('Sorry, you have already been registered with this doctor.'. 'warning')
+                return redirect('chatsearch', form=form)
+
+            # create new connection in table chats
+
+            # init uuid for chat url
+            # base64 enc for url + shortening
+            uuid = uuid.uuid4()
+            enc_uuid = base64.urlsafe_b64encode(uuid.bytes).strip("=") # remove trailing 
+
+            db.execute(
+                "INSERT INTO chats (patient, doctor, uuid) VALUES (:p, :d, :uuid)",
+                {"p": session['current_user'], "d": query, "uuid": enc_uuid}
+            )
+            db.commit()
+            
+            # 1: firstname, 2: lastname
+            flash('You have been successfully connected with Dr. ' + results[0][1] + ' ' + results[0][2], 'success')
+            redirect('chatsearch', form=form)
+
+    # default render
+    return render_template('chatsearch.html', form=form)

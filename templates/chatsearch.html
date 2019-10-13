@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+    {% block nav %}
+        {% include "nav.html" %}
+    {% endblock nav %}
+
+    {% include "flashes.html" %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            {% block content %}
+            <div class="content-section">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Connect with Your Doctor</legend>
+                        <div class="form-group">
+                            {{ form.query.label(class="form-control-label") }}
+                            {% if form.query.errors %}
+                                {{ form.query(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.query.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.query(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                    <small class="text-muted ml-2">
+                        Your doctor should have given you his/her username. Input that here to connect with your doctor.
+                    </small>
+                </form>
+            </div>
+            <div class="border-top pt-3">
+                <small class="text-muted">
+                    Need An Account? filler
+                </small>
+            </div>
+            {% endblock content %}
+
+        </div>
+    </div>
+
+{% endblock body %}
