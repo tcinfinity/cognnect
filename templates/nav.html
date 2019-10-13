@@ -5,12 +5,14 @@
           <img src="{{ url_for('static', filename='assets/logo/258x80.png') }}" class="nav-logo">
         </a> <!--About and Instructions-->
       </div>
-        <a class="nav-item nav-link" href="{{ url_for('tilt') }}"></a>
         {% if session.is_logged %}
+          {% if session.dorp == "p" %}
             <a class="nav-item nav-link" href="{{ url_for('tilt') }}">Tilt Test</a>
             <a class="nav-item nav-link" href="{{ url_for('stroop') }}">Stroop Test</a>
+            <a class="nav-item nav-link" href="{{ url_for('chatsearch') }} data-toggle="tooltip" data-placement="auto bottom" title="Connect with your doctor" aria-label="Connect with your doctor">Connect</a>
             <a class="nav-item nav-link" href="{{ url_for('myaccount') }}">My Account</a>
             <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a> <!--{{ nav-active if request.path == '/logout' }}-->
+          {% endif %}
         {% else %}
             <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
             <a class="nav-item nav-link" href="{{ url_for('signup') }}">Register</a>
