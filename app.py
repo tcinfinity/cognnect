@@ -173,6 +173,7 @@ def login():
             userInfo = db.execute("SELECT * FROM cognnectuser WHERE (username = :un);",{"un": form.username.data}).fetchall()
             if len(userInfo) == 0:
                 raise Exception('username not found')
+
         except:
             print('no user exists')
             flash('Login Unsuccessful. Please check your username!', 'danger')
@@ -180,6 +181,7 @@ def login():
         ''' userinfo Is A Row Of Data, userinfo[0][3] Is The Password Of User'''
 
         try:
+            print("User Info:", userInfo)
             if form.password.data == userInfo[0][4]:
                 userInfo = retrieverow(form.username.data)[0]
                 session['is_logged'] = True
@@ -192,9 +194,8 @@ def login():
                 user = User()
 
                 user.username = userInfo[0]
-                user.email = userInfo[1]
-                user.password = userInfo[2]
-                user.pastrecords = userInfo[3]
+                user.email = userInfo[3]
+                user.password = userInfo[4]
 
                 message = 'You have been logged in, ' + session['firstname'] + '!'
                 flash(message, 'success')
@@ -355,7 +356,7 @@ def chatsearch():
 
             # check if user has already connected with doctor
             possibleConnections = db.execute(
-                "SELECT * FROM chats WHERE patient = :patient AND doctor = :doctor", 
+                "SELECT * FROM chats WHERE patient = :patient AND doctor = :doctor",
                 {"patient": session['current_user'], "doctor": query}
             ).fetchall()
 
@@ -369,14 +370,14 @@ def chatsearch():
             # init uuid for chat url
             # base64 enc for url + shortening
             uuid = uuid.uuid4()
-            enc_uuid = base64.urlsafe_b64encode(uuid.bytes).strip("=") # remove trailing 
+            enc_uuid = base64.urlsafe_b64encode(uuid.bytes).strip("=") # remove trailing
 
             db.execute(
                 "INSERT INTO chats (patient, doctor, uuid) VALUES (:p, :d, :uuid)",
                 {"p": session['current_user'], "d": query, "uuid": enc_uuid}
             )
             db.commit()
-            
+
             # 1: firstname, 2: lastname
             flash('You have been successfully connected with Dr. ' + results[0][1] + ' ' + results[0][2], 'success')
             redirect('chatsearch', form=form)
