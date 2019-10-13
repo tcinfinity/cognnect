@@ -2,7 +2,11 @@
 {% block title %}Cognnect - My Account{% endblock %}
 {% block content %}
 
-<p>Welcome, {{ session.firstname|e }}.</p>
+{% if session['dorp'] == 'd' %}
+<p>Welcome, Doctor {{ session.fullname|e }}.</p>
+{% else %}
+<p>Welcome, Doctor {{ session.fullname|e }}.</p>
+{% endif %}
 <br><br>
 <h1>Account Details</h1>
 <h3>{{ session.fullname|e }}</h3>
@@ -10,20 +14,30 @@
 <br><br>
 <h1>Account Details</h1>
 <h3>{{ session.fullname|e }}</h3>
-{% for result in stroop %}
-<div class="card">
-  <div class="card-body">
-    <h4 class="card-title">Stroop Test On {{ result.Time }}</h4>
-    <p class="card-text">Compat: {{ result.CT }}, Incompat: {{ result.IT }}, Diff: {{ result.D }}</p>
-  </div>
-</div>
-{% endfor%}
-{% for result in tilt %}
-<div class="card">
-  <div class="card-body">
-    <h4 class="card-title">Tilt Test On {{ result.Time }}</h4>
-    <p class="card-text">Left: {{ result.L }}, Right: {{ result.R }}</p>
-  </div>
-</div>
-{% endfor%}
+{% if session.dorp == "p" %}
+  {% for result in stroop %}
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Stroop Test On {{ result.Time }}</h4>
+        <p class="card-text">Compat: {{ result.CT }}, Incompat: {{ result.IT }}, Diff: {{ result.D }}</p>
+      </div>
+    </div>
+  {% endfor %}
+  {% for result in tilt %}
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Tilt Test On {{ result.Time }}</h4>
+        <p class="card-text">Left: {{ result.L }}, Right: {{ result.R }}</p>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  {% for p in pl %}
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Patient: <a href="{{ url_for('movie', imdb_id='tt0071562') }}">{{ p }}</a></h4>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
 {% endblock %}

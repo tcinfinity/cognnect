@@ -90,7 +90,6 @@ def signup():
     emok = True
     if 'is_logged' not in session:
         session['is_logged'] = False
-
     if session['is_logged']:
         return redirect(url_for('index')) #TODO: ,is_logged=True
     usernames = db.execute("SELECT username FROM cognnectuser").fetchall()
@@ -116,6 +115,7 @@ def signup():
         session['current_user'] = form.username.data
         session["firstname"] = form.firstname.data
         session["fullname"] = form.firstname.data + " " + form.lastname.data
+        session["dorp"] = form.dorp.data
         return redirect(url_for('myaccount'))
 
     elif not unok and emok:
@@ -186,6 +186,7 @@ def login():
                 session['current_user'] = form.username.data
                 session['firstname'] = userInfo[0][1]
                 session['fullname'] = userInfo[0][1] + " " + userInfo[0][2]
+                session["dorp"] = userInfo[0][5]
                 print("User Full Name: " + session['fullname'])
 
                 user = User()
@@ -210,6 +211,16 @@ def login():
 def myaccount():
     stroopInfo = db.execute("SELECT * FROM stroop WHERE (username = :un);",{"un": session['current_user']}).fetchall()
     tiltInfo = db.execute("SELECT * FROM tilt WHERE (username = :un);",{"un": session['current_user']}).fetchall()
+    PL = []
+    DL = []
+    if session['dorp'] == 'd':
+        patientList = db.execute("SELECT * FROM chats WHERE (doctor = :un);",{"un": session['current_user']}).fetchall()
+        for p in patientList:
+            PL.append(p[0])
+    elif session['dorp'] == 'p':
+        doctorList = db.execute("SELECT * FROM stroop WHERE (patient = :un);",{"un": session['current_user']}).fetchall()
+        for d in doctorList:
+            DL.append(p[0])
     stroopFinalList = []
     for test in stroopInfo:
         temp = {}
@@ -225,7 +236,35 @@ def myaccount():
         temp['L'] = test[2]
         temp['R'] = test[3]
         tiltFinalList.append(temp)
-    return render_template('myaccount.html', stroop=stroopFinalList, tilt=tiltFinalList)
+    return render_template('myaccount.html', stroop=stroopFinalList, tilt=tiltFinalList, pl=PL, dl=DL)
+
+@app.route('/myaccount/patient/<patient_id>', methods=['GET', 'POST'])
+def patientaccount(patient_id):
+    if session['dorp'] == 'd':
+        stroopInfo = db.execute("SELECT * FROM stroop WHERE (username = :un);",{"un": patient_id}).fetchall()
+        tiltInfo = db.execute("SELECT * FROM tilt WHERE (username = :un);",{"un": patient_id}).fetchall()
+        PL = []
+        DL = []
+        doctorList = db.execute("SELECT * FROM stroop WHERE (patient = :un);",{"un": patient_id}).fetchall()
+        stroopFinalList = []
+        for test in stroopInfo:
+            temp = {}
+            temp['Time'] = test[1]
+            temp['CT'] = test[2]
+            temp['IT'] = test[3]
+            temp['D'] = test[4]
+            stroopFinalList.append(temp)
+        tiltFinalList = []
+        for test in tiltInfo:
+            temp = {}
+            temp['Time'] = test[1]
+            temp['L'] = test[2]
+            temp['R'] = test[3]
+            tiltFinalList.append(temp)
+
+        return render_template('myaccount.html', stroop=stroopFinalList, tilt=tiltFinalList, pl=PL, dl=DL)
+    else:
+        abort(404)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
