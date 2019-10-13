@@ -2,6 +2,9 @@
 {% block title %}Cognnect - My Account{% endblock %}
 {% block content %}
 
-Welcome, {{ session.current_user|e }}.
+Welcome, {{ session.firstname|e }}.
+<h1>Account Details</h1>
+<h3>{{ session.fullname }}</h3>
+<h3 class="text-muted">{{ session.username }}<h3>
 
 {% endblock %}
