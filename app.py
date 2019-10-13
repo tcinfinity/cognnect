@@ -184,6 +184,7 @@ def login():
                 session['current_user'] = form.username.data
                 session['firstname'] = userInfo[0][1]
                 session['fullname'] = userInfo[0][1] + " " + userInfo[0][2]
+                session['dorp'] = userInfo[0][5]
                 print("User Full Name: " + session['fullname'])
 
                 user = User()
@@ -195,7 +196,7 @@ def login():
 
                 message = 'You have been logged in, ' + session['firstname'] + '!'
                 flash(message, 'success')
-                return redirect(url_for('myaccount'))
+                return redirect(url_for('myaccount', stroop=stroopFinalList, tilt=tiltFinalList))
             else:
                 print('not matching')
                 flash('Login Unsuccessful. Please check username and password and make sure that they are correct!', 'danger')
