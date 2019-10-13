@@ -206,7 +206,24 @@ def login():
 
 @app.route('/myaccount', methods=['GET', 'POST'])
 def myaccount():
-    return render_template('myaccount.html')
+    stroopInfo = db.execute("SELECT * FROM stroop WHERE (username = :un);",{"un": session['current_user']}).fetchall()
+    tiltInfo = db.execute("SELECT * FROM tilt WHERE (username = :un);",{"un": session['current_user']}).fetchall()
+    stroopFinalList = []
+    for test in stroopInfo:
+        temp = {}
+        temp['Time'] = stroopInfo[1]
+        temp['CT'] = stroopInfo[2]
+        temp['IT'] = stroopInfo[3]
+        temp['D'] = stroopInfo[4]
+        stroopFinalList.append(temp)
+    tiltFinalList = []
+    for test in tiltInfo:
+        temp = {}
+        temp['Time'] = tiltInfo[1]
+        temp['L'] = tiltInfo[2]
+        temp['R'] = tiltInfo[3]
+        tiltFinalList.append(temp)
+    return render_template('myaccount.html', stroop=stroopFinalList, tilt=tiltFinalList)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():

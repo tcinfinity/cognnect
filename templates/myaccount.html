@@ -2,9 +2,29 @@
 {% block title %}Cognnect - My Account{% endblock %}
 {% block content %}
 
-Welcome, {{ session.firstname|e }}.
+<p>Welcome, {{ session.firstname|e }}.</p>
+<br><br>
 <h1>Account Details</h1>
 <h3>{{ session.fullname|e }}</h3>
-<h3 class="text-muted">{{ session.username|e }}</h3>
+<h3 class="text-grey">{{ session.username|e }}</h3>
+<br><br>
+<h1>Account Details</h1>
+<h3>{{ session.fullname|e }}</h3>
 
+{% for result in stroop %}
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Stroop Test On {{ result.Time }}</h4>
+    <p class="card-text">Compat: {{ result.CT }}, Incompat: {{ result.IT }}, Diff: {{ result.D }}</p>
+  </div>
+</div>
+{% endfor%}
+{% for result in tilt %}
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Tilt Test On {{ result.Time }}</h4>
+    <p class="card-text">Left: {{ result.L }}, Right: {{ result.R }}</p>
+  </div>
+</div>
+{% endfor%}
 {% endblock %}
