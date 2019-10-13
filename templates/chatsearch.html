@@ -1,16 +1,7 @@
 {% extends "base.html" %}
 
 {% block link %}
-<style>
-.link {
-    cursor: pointer;
-    transition: color 0.1 ease-in-out;
-}
-
-.link:hover {
-    color: #181818;
-}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/chatsearch.css') }}">
 {% endblock %}
 
 {% block script %}
@@ -54,7 +45,7 @@
                 </form>
             </div>
             <div class="border-top pt-3">
-                <small id="need-help" class="text-muted font-weight-bold link" style="cursor: pointer">Need help?</small><br>
+                <small id="need-help" class="text-muted font-weight-bold link-like">Need help?</small><br>
                 <small id="help-text" class="text-muted d-none">
                         Your doctor should have given you his/her username. Input that here to connect with your doctor.
                 </small>
@@ -67,7 +58,7 @@
 
 <script>
 $('#need-help').click(() => {
-    $('#help-text').removeClass('d-none');
+    $('#help-text').toggleClass('d-none');
 })
 </script>
 {% endblock body %}

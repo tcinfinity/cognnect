@@ -1,0 +1,8 @@
+.link-like {
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.link-like:hover {
+  color: #181818 !important; /* override bootstrap (?) */
+}

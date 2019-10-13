@@ -380,8 +380,8 @@ def chatsearch():
 
             # init uuid for chat url
             # base64 enc for url + shortening
-            enc_uuid = uuid.uuid4()
-            # enc_uuid = base64.urlsafe_b64encode(base_uuid.bytes).strip("=") # remove trailing
+            base_uuid = uuid.uuid4()
+            enc_uuid = base64.urlsafe_b64encode(base_uuid.bytes).decode('utf8').rstrip('=') # remove trailing
 
             db.execute(
                 "INSERT INTO chats (patient, doctor, uuid) VALUES (:p, :d, :uuid)",
