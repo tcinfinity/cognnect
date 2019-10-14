@@ -6,7 +6,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
-  font-family: "Futura"
+  font-family: "Futura" /* need font-face */
 }
 
 h3.text-grey {
@@ -110,4 +110,12 @@ a.article-title:hover {
 .logout .fadeout {
   opacity: 0;
   top: -50px;
+}
+
+.vertical-center {
+  max-height: 100%;  /* Fallback for browsers that do not support vh unit */
+  max-height: 100vh; 
+
+  display: flex;
+  align-items: center;
 }

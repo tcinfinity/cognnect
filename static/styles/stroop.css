@@ -12,14 +12,6 @@
   margin: 0 auto;
 }
 
-.vertical-center {
-  max-height: 100%;  /* Fallback for browsers that do not support vh unit */
-  max-height: 100vh; 
-
-  display: flex;
-  align-items: center;
-}
-
 .flex-grow-1 {
   flex-grow: 1;
 }
